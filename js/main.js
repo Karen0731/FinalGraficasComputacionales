@@ -2,6 +2,7 @@ import * as THREE from '/build/three.module.js';
 import {OrbitControls} from '/js/jsm/controls/OrbitControls.js';
 import Stats from '/js/jsm/libs/stats.module.js';
 import dat from '/js/jsm/libs/dat.gui.module.js';
+import * as Ammo from '/js/jsm/physics/ammo.js';
 
 "using strict";
 
