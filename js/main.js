@@ -2,12 +2,12 @@ import * as THREE from '/build/three.module.js';
 import {OrbitControls} from '/js/jsm/controls/OrbitControls.js';
 import Stats from '/js/jsm/libs/stats.module.js';
 import dat from '/js/jsm/libs/dat.gui.module.js';
-import * as Ammo from '/js/jsm/physics/ammo.js';
 
 "using strict";
 
 let renderer, scene, camera, mesh, cameraControl, stats, gui;
 window.anim = false;
+window.reset = false;
 var targetPositionY = 0.5;
 var gravity = 0.01;
 var velocity = 0.1; 
@@ -38,6 +38,36 @@ function init() {
     directionalLight.position.set(5, 3, 0);
     directionalLight.castShadow = true;
 
+    //skybox
+    const ft = new THREE.TextureLoader().load("skycube_1/skyrender0001.bmp");
+    const bk = new THREE.TextureLoader().load("skycube_1/skyrender0004.bmp");
+    const up = new THREE.TextureLoader().load("skycube_1/skyrender0003.bmp");
+    const dn = new THREE.TextureLoader().load("skycube_1/skyrender0006.bmp");
+    const rt = new THREE.TextureLoader().load("skycube_1/skyrender0002.bmp");
+    const lf = new THREE.TextureLoader().load("skycube_1/skyrender0005.bmp");
+    
+    const materialArr = [];
+    materialArr.push( 
+        new THREE.MeshBasicMaterial({map:ft,side:THREE.BackSide}),
+        new THREE.MeshBasicMaterial({map:bk,side:THREE.BackSide}),
+        new THREE.MeshBasicMaterial({map:up,side:THREE.BackSide}),
+        new THREE.MeshBasicMaterial({map:dn,side:THREE.BackSide}),
+        new THREE.MeshBasicMaterial({map:lf,side:THREE.BackSide}),
+        new THREE.MeshBasicMaterial({map:rt,side:THREE.BackSide})
+        );
+    const textureCube = new THREE.CubeTextureLoader().load( [
+        "skycube_1/skyrender0002.bmp","skycube_1/skyrender0005.bmp",
+        "skycube_1/skyrender0003.bmp","skycube_1/skyrender0006.bmp",
+        "skycube_1/skyrender0004.bmp","skycube_1/skyrender0001.bmp"
+    ]);
+    
+    const materialSkybox = new THREE.MeshBasicMaterial({map:ft,side:THREE.BackSide});
+
+    const skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+    const skybox = new THREE.Mesh(skyboxGeo,materialArr);
+
+    scene.add(skybox);
+
     // MODELS
     let geometry = new THREE.BoxGeometry();
     let material = new THREE.MeshPhongMaterial({color: "red"});
@@ -57,9 +87,16 @@ function init() {
 
     //GUI
     gui = new dat.GUI();
+    
     gui.add(window, "anim").name("Start Simulation").listen().onChange(function(value) {
-
+        reset = false;
     });
+
+    gui.add(window, "reset").name("Reset Simulation").listen().onChange(function(value) {
+        anim = false;
+        mesh.position.set(0,3,0);
+    });
+
     gui.open();
 
 
@@ -121,4 +158,10 @@ class Floor extends THREE.Mesh {
         this.add(this.wireframeHelper);
         this.visible = true;
     }
+}
+
+//Skybox change function
+function changeSpace()
+{
+    
 }
