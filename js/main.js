@@ -5,7 +5,7 @@ import dat from '/js/jsm/libs/dat.gui.module.js';
 
 "using strict";
 
-let renderer, scene, camera, mesh, cameraControl, stats, gui, result;
+let renderer, scene, camera, mesh, cameraControl, stats, result;
 
 window.anim = false;
 window.reset = false;
@@ -16,6 +16,11 @@ window.earth = false;
 var targetPositionY = 0.5;
 var gravity = 0.01;
 var velocity = 0.1; 
+
+let gui = new dat.GUI();
+let modelMenu = gui.addFolder("Caracteristicas del objeto");
+let skyBoxMenu = gui.addFolder("Seleccionar Lugar");
+let simulationMenu = gui.addFolder("Simulacion");
 
 function init() {
 
@@ -44,6 +49,8 @@ function init() {
     directionalLight.castShadow = true;
 
     selectEarth();
+    document.getElementById("gravityText").innerHTML = "9.81 m/s2";
+    document.getElementById("hText").innerHTML = "3 m";
     earth = true;
 
     // MODELS
@@ -63,29 +70,51 @@ function init() {
     scene.add(floor);
     scene.add(directionalLight);
 
-    //GUI
-    gui = new dat.GUI();
+     //GRAVITY CALCULATIONS DISPLAY
+     var calculations = {
+        gravityR : 0,
+        initialVelocityR : 0,
+        finalVelocityR: 0
+    }
+
+    let model =
+    {
+        posY : mesh.position.y,
+    }
     
     //Start animation for gravity
-    gui.add(window, "anim").name("Start Simulation").listen().onChange(function(value) {
+    simulationMenu.add(window, "anim").name("Start Simulation").listen().onChange(function(value) {
         reset = false;
         setTimeout(function(){
             anim = false;
           }, 2000);
+          calculations.finalVelocityR = Math.sqrt((2*calculations.gravityR)*mesh.position.y);
+          console.log(calculations.finalVelocityR);
+          document.getElementById("finalVText").innerHTML = "";
     });
 
     //reset animation
-    gui.add(window, "reset").name("Reset Simulation").listen().onChange(function(value) {
+    simulationMenu.add(window, "reset").name("Reset Simulation").listen().onChange(function(value) {
         anim = false;
         mesh.position.set(0,3,0);
+
+        //Reset model values
+        document.getElementById("hText").innerHTML = "3 m";
+        modelMenu.__controllers[0].setValue(mesh.position.y);
     });
 
-    let skyBoxMenu = gui.addFolder("Select Place");
+    modelMenu.add(model, "posY").min(0).max(50).step(0.5).name("Altura").listen().onChange(function(value){
+        mesh.position.y = value;
+        document.getElementById("hText").innerHTML = value + "m";
+    });
+
     //Changes from space to earth
     skyBoxMenu.add(window, "earth").name("Earth").listen().onChange(function(value) {
         selectEarth();
         earth = true;
         space = false;
+        calculations.gravityR = 9.81;
+        document.getElementById("gravityText").innerHTML = calculations.gravityR + " m/s2";
     });
 
     //changes from earth to space
@@ -93,32 +122,13 @@ function init() {
         selectSpace();
         earth = false;
         space = true;
+        calculations.gravityR = 5.76;
+        document.getElementById("gravityText").innerHTML = calculations.gravityR + " m/s2";
     });
 
     skyBoxMenu.open();
 
     gui.open();
-
-    //GRAVITY CALCULATIONS DISPLAY
-    var calculations = {
-        gravityR : 9.81,
-        velocityR : 9.86
-    }
-
-    result = new dat.GUI({autoPlace : false});
-    var customContainer = document.getElementById('result');
-    customContainer.appendChild(result.domElement);
-
-    result.add(calculations, 'gravityR').name("Gravity").listen().onChange(function(value) {
-        
-    });
-
-    result.add(calculations, 'velocityR').name("Velocity").listen().onChange(function(value) {
-        
-    });
-
-    result.open();
-
     
 
     //STATS
