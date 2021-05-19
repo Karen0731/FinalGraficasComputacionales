@@ -8,6 +8,20 @@ html, body{
 
 #result{
     position: absolute;
-    bottom: 10%;
+    bottom: 2%;
     left: 1%;
+    background-color: black;
+    width: 15%;
+    height: 20%;
+    color: antiquewhite;
+    display: flex;
+    flex-direction: column;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+    margin-top: 3%;
+    margin-left: 2%;
+    font-family: Verdana;
 }
