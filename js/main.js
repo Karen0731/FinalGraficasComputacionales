@@ -22,6 +22,16 @@ let modelMenu = gui.addFolder("Caracteristicas del objeto");
 let skyBoxMenu = gui.addFolder("Seleccionar Lugar");
 let simulationMenu = gui.addFolder("Simulacion");
 
+//GRAVITY CALCULATIONS DISPLAY
+var calculations = 
+{
+    gravityR : 0,
+    initialVelocityR : 0,
+    finalVelocityR: 0,
+    mass: 10
+}
+
+
 function init() {
 
     // RENDERER
@@ -49,8 +59,9 @@ function init() {
     directionalLight.castShadow = true;
 
     selectEarth();
-    document.getElementById("gravityText").innerHTML = "9.81 m/s2";
-    document.getElementById("hText").innerHTML = "3 m";
+    document.getElementById("gravityText").innerHTML = "9.81";
+    document.getElementById("hText").innerHTML = "3";
+    document.getElementById("massText").innerHTML = "10";
     earth = true;
 
     // MODELS
@@ -70,13 +81,7 @@ function init() {
     scene.add(floor);
     scene.add(directionalLight);
 
-     //GRAVITY CALCULATIONS DISPLAY
-     var calculations = {
-        gravityR : 0,
-        initialVelocityR : 0,
-        finalVelocityR: 0
-    }
-
+     
     let model =
     {
         posY : mesh.position.y,
@@ -88,9 +93,6 @@ function init() {
         setTimeout(function(){
             anim = false;
           }, 2000);
-          calculations.finalVelocityR = Math.sqrt((2*calculations.gravityR)*mesh.position.y);
-          console.log(calculations.finalVelocityR);
-          document.getElementById("finalVText").innerHTML = "";
     });
 
     //reset animation
@@ -99,13 +101,17 @@ function init() {
         mesh.position.set(0,3,0);
 
         //Reset model values
-        document.getElementById("hText").innerHTML = "3 m";
+        document.getElementById("hText").innerHTML = "3";
         modelMenu.__controllers[0].setValue(mesh.position.y);
     });
 
     modelMenu.add(model, "posY").min(0).max(50).step(0.5).name("Altura").listen().onChange(function(value){
         mesh.position.y = value;
-        document.getElementById("hText").innerHTML = value + "m";
+        document.getElementById("hText").innerHTML = value;
+    });
+
+    modelMenu.add(calculations, "mass").min(0).max(50).step(0.5).name("Masa").listen().onChange(function(value){
+        document.getElementById("massText").innerHTML = value;
     });
 
     //Changes from space to earth
@@ -114,7 +120,7 @@ function init() {
         earth = true;
         space = false;
         calculations.gravityR = 9.81;
-        document.getElementById("gravityText").innerHTML = calculations.gravityR + " m/s2";
+        document.getElementById("gravityText").innerHTML = calculations.gravityR;
     });
 
     //changes from earth to space
@@ -123,7 +129,7 @@ function init() {
         earth = false;
         space = true;
         calculations.gravityR = 5.76;
-        document.getElementById("gravityText").innerHTML = calculations.gravityR + " m/s2";
+        document.getElementById("gravityText").innerHTML = calculations.gravityR;
     });
 
     skyBoxMenu.open();
@@ -164,7 +170,15 @@ function updateScene()
             //console.log(velocity);
         }
         mesh.position.y -= velocity;
-        console.log(activate);
+        //console.log(activate);
+
+        //CALCULATE RESULTS
+        calculations.gravityR = parseFloat(document.getElementById("gravityText").innerHTML);
+        calculations.finalVelocityR = Math.sqrt((2*calculations.gravityR)*mesh.position.y);
+
+        //PRINT RESULTS
+        document.getElementById("finalVText").innerHTML = (Math.round(calculations.finalVelocityR* 100) / 100).toFixed(2);
+        document.getElementById("hText").innerHTML = (Math.round(mesh.position.y* 100) / 100).toFixed(2);
     }
 }
 
