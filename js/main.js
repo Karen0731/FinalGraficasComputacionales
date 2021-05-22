@@ -53,21 +53,56 @@ function init() {
     document.getElementById("hText").innerHTML = "3 m";
     earth = true;
 
-    // MODELS
-    let geometry = new THREE.BoxGeometry();
-    let material = new THREE.MeshPhongMaterial({color: "red"});
-    mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(0,3,0);
-    mesh.castShadow = true;
-    mesh.name= "Cube";
+    //PHYSICS
+
+    var world = new p2.World();
+    world.sleepMode = p2.World.BODY_SLEEPING;
+
+
+    
 
     //FLOOR
     let floor = new Floor();
     floor.receiveShadow = true;
 
-    // SCENE GRAPH
-    scene.add(mesh);
+    var planeShape = new p2.Plane();
+    var planeBody = new p2.Body({position:[0,0]});
+    planeBody.name = "ground";
+    planeBody.data = floor;
+    planeBody.addShape(planeShape);
+    world.addBody(planeBody);
     scene.add(floor);
+
+    // MODELS
+    let geometry = new THREE.BoxGeometry();
+    let material = new THREE.MeshPhongMaterial({color: "red"});
+    mesh = new THREE.Mesh(geometry, material);
+
+    var x = 0
+    var y = 3
+    mesh.position.set(x,y,0);
+    mesh.castShadow = true;
+    mesh.name= "Cube";
+    scene.add(mesh);
+    //Add Physics to the cube
+    //CREATE RANDOM WIDTH AND HEIGHT SIZE
+    var w = 0.1+Math.random();
+    var h = 0.1+Math.random();
+    var boxShape = new p2.Rectangle(w,h);
+    var boxBody = new p2.Body({ mass:1, position:[x,y],angularVelocity:1 });
+    boxBody.allowSleep = true;
+    boxBody.sleepSpeedLimit = 1; 
+    boxBody.sleepTimeLimit =  1;
+    boxBody.data = mesh; // ADD 3d OBJECT AS DATA VALUE
+    boxBody.name="box"; //ADD NAME TO THE P2 BODY
+    boxBody.addShape(boxShape);
+    world.addBody(boxBody);
+
+    
+
+    // SCENE GRAPH
+    
+    
     scene.add(directionalLight);
 
      //GRAVITY CALCULATIONS DISPLAY
@@ -223,6 +258,10 @@ function selectEarth()
     const skybox = new THREE.Mesh(skyboxGeo,materialArr);
 
     scene.add(skybox);
+
+    
+
+    
 }
 
 function selectSpace()
