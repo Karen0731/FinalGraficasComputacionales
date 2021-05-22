@@ -73,31 +73,8 @@ function init() {
     world.addBody(planeBody);
     scene.add(floor);
 
-    // MODELS
-    let geometry = new THREE.BoxGeometry();
-    let material = new THREE.MeshPhongMaterial({color: "red"});
-    mesh = new THREE.Mesh(geometry, material);
-
-    var x = 0
-    var y = 3
-    mesh.position.set(x,y,0);
-    mesh.castShadow = true;
-    mesh.name= "Cube";
-    scene.add(mesh);
-    //Add Physics to the cube
-    //CREATE RANDOM WIDTH AND HEIGHT SIZE
-    var w = 0.1+Math.random();
-    var h = 0.1+Math.random();
-    var boxShape = new p2.Rectangle(w,h);
-    var boxBody = new p2.Body({ mass:1, position:[x,y],angularVelocity:1 });
-    boxBody.allowSleep = true;
-    boxBody.sleepSpeedLimit = 1; 
-    boxBody.sleepTimeLimit =  1;
-    boxBody.data = mesh; // ADD 3d OBJECT AS DATA VALUE
-    boxBody.name="box"; //ADD NAME TO THE P2 BODY
-    boxBody.addShape(boxShape);
-    world.addBody(boxBody);
-
+    //add models
+    var [boxBody, boxShape, mesh] = addObject(world,scene);
     
 
     // SCENE GRAPH
@@ -224,6 +201,42 @@ class Floor extends THREE.Mesh {
         this.add(this.wireframeHelper);
         this.visible = true;
     }
+}
+
+function addObject (world,scene)
+{
+    // MODELS
+    let geometry = new THREE.BoxGeometry();
+    let material = new THREE.MeshPhongMaterial({color: "red"});
+    mesh = new THREE.Mesh(geometry, material);
+
+    var x = 0
+    var y = 3
+    mesh.position.set(x,y,0);
+    mesh.castShadow = true;
+    mesh.name= "Cube";
+    scene.add(mesh);
+    //Add Physics to the cube
+    //CREATE RANDOM WIDTH AND HEIGHT SIZE
+    var w = 0.1+Math.random();
+    var h = 0.1+Math.random();
+
+    var boxShape = new p2.Rectangle(w,h);
+
+    var boxBody = new p2.Body({ mass:1, position:[x,y], angularVelocity:1 });
+    
+    boxBody.allowSleep = true;
+    boxBody.sleepSpeedLimit = 1; 
+    boxBody.sleepTimeLimit =  1;
+
+    boxBody.data = mesh; // ADD 3d OBJECT AS DATA VALUE
+    boxBody.name="box"; //ADD NAME TO THE P2 
+    
+    boxBody.addShape(boxShape);
+    world.addBody(boxBody);
+    
+    return [boxBody,boxShape,mesh]
+
 }
 
 //Skybox change functions
