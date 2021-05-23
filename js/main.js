@@ -5,7 +5,7 @@ import dat from '/js/jsm/libs/dat.gui.module.js';
 
 "using strict";
 
-let renderer, scene, camera, mesh, cameraControl, stats, result;
+let renderer, scene, camera, mesh, cameraControl, stats, result, world;
 
 window.anim = false;
 window.reset = false;
@@ -66,7 +66,7 @@ function init() {
 
     //PHYSICS
 
-    var world = new p2.World();
+    world = new p2.World();
     world.sleepMode = p2.World.BODY_SLEEPING;
 
 
@@ -176,15 +176,19 @@ function updateScene()
     //FIRST ANIMATION FOR GRAVITY 
     //!NEEDS TO CHANGE FOR ALL GEOMETRIES IN THE FUTURE, SO GOOD IDEA TO CHANGE THIS TO A FUNCTION
     if(anim) {
-        if (mesh.position.y <= targetPositionY) {
-             velocity = -velocity * 0.8;
-        }
-        else{
-            velocity += gravity;
-            //console.log(velocity);
-        }
-        mesh.position.y -= velocity;
-        //console.log(activate);
+        //UPDATE PHYSICS
+        world.step(1/60);
+        
+        //FOR EACH OBJECT IN P2 PHYSICS WORLD
+        for (var i = 0; i < world.bodies.length; i++) 
+        { 
+            //IF IT IS A BOX -> UPDATE POSITION AND ROTATION ACCORDINGLY
+            if(world.bodies[i].name == "box")
+            {
+                world.bodies[i].data.position.set(world.bodies[i].position[0],world.bodies[i].position[1],0);
+                world.bodies[i].data.rotation.z = world.bodies[i].angle; 
+            }
+        }; 
 
         //CALCULATE RESULTS
         calculations.gravityR = parseFloat(document.getElementById("gravityText").innerHTML);
