@@ -2,6 +2,7 @@ import * as THREE from '/build/three.module.js';
 import {OrbitControls} from '/js/jsm/controls/OrbitControls.js';
 import Stats from '/js/jsm/libs/stats.module.js';
 import dat from '/js/jsm/libs/dat.gui.module.js';
+import {GLTFLoader} from "./GLTFLoader.js"
 
 "using strict";
 
@@ -71,6 +72,40 @@ function init() {
     mesh.position.set(0,3,0);
     mesh.castShadow = true;
     mesh.name= "Cube";
+
+    //GLTFLoader
+    // Instantiate a loader
+    const loader = new GLTFLoader();
+    // Load a glTF resource
+    loader.load(
+        // resource URL
+        'Modelos/scene.gltf',
+        // called when the resource is loaded
+        function ( gltf ) {
+
+            gltf.scene.scale.set(0.05,0.05,0.05) // scale***
+            scene.add( gltf.scene );
+
+            gltf.animations; // Array<THREE.AnimationClip>
+            gltf.scene; // THREE.Group
+            gltf.scenes; // Array<THREE.Group>
+            gltf.cameras; // Array<THREE.Camera>
+            gltf.asset; // Object
+
+        },
+        // called while loading is progressing
+        function ( xhr ) {
+
+            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+        },
+        // called when loading has errors
+        function ( error ) {
+
+            console.log( 'An error happened' );
+
+        }
+    );
 
     //FLOOR
     let floor = new Floor();
