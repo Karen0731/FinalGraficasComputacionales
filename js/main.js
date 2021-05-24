@@ -5,7 +5,7 @@ import dat from '/js/jsm/libs/dat.gui.module.js';
 
 "using strict";
 
-let renderer, scene, camera, mesh, cameraControl, stats, result, world;
+let renderer, scene, camera, mesh, cameraControl, stats, result, world, boxShape, boxBody;
 
 window.anim = false;
 window.reset = false;
@@ -67,10 +67,9 @@ function init() {
     //PHYSICS
 
     world = new p2.World();
+    world.gravity[1] = -9.81;
+    console.log(world.gravity[1]);
     world.sleepMode = p2.World.BODY_SLEEPING;
-
-
-    
 
     //FLOOR
     let floor = new Floor();
@@ -104,9 +103,13 @@ function init() {
     //Start animation for gravity
     simulationMenu.add(window, "anim").name("Start Simulation").listen().onChange(function(value) {
         reset = false;
-        setTimeout(function(){
-            anim = false;
-          }, 2000);
+
+        //CALCULATE FINAL VELOCITY
+        calculations.gravityR = parseFloat(document.getElementById("gravityText").innerHTML);
+        calculations.finalVelocityR = Math.sqrt((2*calculations.gravityR)*mesh.position.y);
+
+        //PRINT RESULTS
+        document.getElementById("finalVText").innerHTML = (Math.round(calculations.finalVelocityR* 100) / 100).toFixed(2);
     });
 
     //reset animation
@@ -117,11 +120,20 @@ function init() {
         //Reset model values
         document.getElementById("hText").innerHTML = "3";
         modelMenu.__controllers[0].setValue(mesh.position.y);
+
+        resetBodyValues(mesh.position.x,mesh.position.y);
+
+        //reset values de velocidad
+        document.getElementById("finalVText").innerHTML = "0";
+        document.getElementById("actualVText").innerHTML = "0";
+
+        console.log(boxBody);
     });
 
     modelMenu.add(model, "posY").min(0).max(50).step(0.5).name("Altura").listen().onChange(function(value){
         mesh.position.y = value;
         document.getElementById("hText").innerHTML = value;
+        boxBody.position[1] = value;
     });
 
     modelMenu.add(calculations, "mass").min(0).max(50).step(0.5).name("Masa").listen().onChange(function(value){
@@ -135,6 +147,7 @@ function init() {
         space = false;
         calculations.gravityR = 9.81;
         document.getElementById("gravityText").innerHTML = calculations.gravityR;
+        world.gravity[1] = -9.81;
     });
 
     //changes from earth to space
@@ -144,6 +157,7 @@ function init() {
         space = true;
         calculations.gravityR = 5.76;
         document.getElementById("gravityText").innerHTML = calculations.gravityR;
+        world.gravity[1] = -5.76;
     });
 
     skyBoxMenu.open();
@@ -190,13 +204,13 @@ function updateScene()
             }
         }; 
 
-        //CALCULATE RESULTS
+        //CALCULATE ACTUAL VELOCITY
         calculations.gravityR = parseFloat(document.getElementById("gravityText").innerHTML);
         calculations.finalVelocityR = Math.sqrt((2*calculations.gravityR)*mesh.position.y);
 
         //PRINT RESULTS
-        document.getElementById("finalVText").innerHTML = (Math.round(calculations.finalVelocityR* 100) / 100).toFixed(2);
-        document.getElementById("hText").innerHTML = (Math.round(mesh.position.y* 100) / 100).toFixed(2);
+        document.getElementById("actualVText").innerHTML = (Math.round(calculations.finalVelocityR* 100) / 100).toFixed(2);
+        document.getElementById("hText").innerHTML = (Math.round(mesh.position.y* 100) / 100).toFixed(0);
     }
 }
 
@@ -236,18 +250,16 @@ class Floor extends THREE.Mesh {
 
 function addObject (type,world,scene,position)
 {
-
-
     switch(type){
         case 'circle':
 
             break;
         case 'box':
-            var w = 0.1+Math.random();
-            var h = 0.1+Math.random();
+            var w = 1;
+            var h = 1;
             var x = position.x;
             var y = position.y;
-            let geometry = new THREE.BoxGeometry(w,h,.5);
+            let geometry = new THREE.BoxGeometry(w,h,1);
             let material = new THREE.MeshPhongMaterial({ color: getRandomColor() });
             mesh = new THREE.Mesh(geometry, material);
 
@@ -260,9 +272,9 @@ function addObject (type,world,scene,position)
             //CREATE RANDOM WIDTH AND HEIGHT SIZE
             
 
-            var boxShape = new p2.Rectangle(w,h);
+            boxShape = new p2.Rectangle(w,h);
 
-            var boxBody = new p2.Body({ mass:1, position:[x,y], angularVelocity:1 });
+            boxBody = new p2.Body({ mass:1, position:[x,y], angularVelocity:1 });
     
             boxBody.allowSleep = true;
             boxBody.sleepSpeedLimit = 1; 
@@ -360,4 +372,16 @@ function selectSpace()
     const skybox = new THREE.Mesh(skyboxGeo,materialArr);
 
     scene.add(skybox);
+}
+
+function resetBodyValues(x,y)
+{
+    boxBody.position[0] = x;
+    boxBody.position[1] = y;
+    boxBody.angle = 0;
+    boxBody.idleTime = 0;
+    boxBody.vlambda[0] = 0;
+    boxBody.vlambda[1] = 0;
+    boxBody.angularVelocity = 1;
+    boxBody.wlambda = 0;
 }

@@ -1,6 +1,3 @@
-- Hacer un reset de todos los atributos de fisica del objeto cuando se Realiza el reset de la animacion
-- Corregir la pos.y del objeto creado cuando el usuario modifica la altura del objeto 
-    - En este momento cuando se modifica y se inicia la simulacion esta mal
 - Agregar lo de las figuras importadas
 - Revisar resultados obtenidos
 
