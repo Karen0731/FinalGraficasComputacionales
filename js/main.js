@@ -2,6 +2,7 @@ import * as THREE from '/build/three.module.js';
 import {OrbitControls} from '/js/jsm/controls/OrbitControls.js';
 import Stats from '/js/jsm/libs/stats.module.js';
 import dat from '/js/jsm/libs/dat.gui.module.js';
+import {GLTFLoader} from "./GLTFLoader.js"
 
 "using strict";
 
@@ -11,6 +12,11 @@ window.anim = false;
 window.reset = false;
 window.space = false;
 window.earth = false;
+window.car = false;
+window.apple = false;
+window.modelo1 = false;
+window.modelo2 = false;
+var modelIds = [0,0,0,0];
 
 //Variables for gravity
 var targetPositionY = 0.5;
@@ -70,6 +76,15 @@ function init() {
     world.gravity[1] = -9.81;
     console.log(world.gravity[1]);
     world.sleepMode = p2.World.BODY_SLEEPING;
+
+    //GLTFLoader
+    // Instantiate a loader
+    const loader = new GLTFLoader();
+    // Load a glTF resource
+    
+    //Invisible el cube, que servira de padre a los modelos
+    mesh.material.transparent = true;
+    mesh.material.opacity = 0;
 
     //FLOOR
     let floor = new Floor();
@@ -138,6 +153,139 @@ function init() {
 
     modelMenu.add(calculations, "mass").min(0).max(50).step(0.5).name("Masa").listen().onChange(function(value){
         document.getElementById("massText").innerHTML = value;
+    });
+
+    modelMenu.add(window, "car").name("Car").listen().onChange(function(value) {
+        if(value == true){
+            //quitar modelo activo
+            if(apple){
+                scene.getObjectByProperty( 'uuid', modelIds[1] ).visible = false;
+                apple = false;
+            } else if(modelo1){
+                scene.getObjectByProperty( 'uuid', modelIds[2] ).visible = false;
+                modelo1 = false;
+            } else if(modelo2){
+                scene.getObjectByProperty( 'uuid', modelIds[3] ).visible = false;
+                modelo2 = false;
+            }
+            loader.load(
+                // resource URL
+                'Car/scene.gltf',
+                // called when the resource is loaded
+                function ( gltf ) {
+                    gltf.scene.scale.set(0.1,0.1,0.1) // scale***
+                    modelIds[0] = gltf.scene.uuid;
+                    console.log(modelIds[0]);
+                    scene.add( gltf.scene );
+                    mesh.add(gltf.scene);
+                    gltf.scene.position.x = 0;
+                    gltf.scene.position.z = -1;
+                    gltf.scene.position.y = -0.4;
+                }
+            );
+        } else{
+            scene.getObjectByProperty( 'uuid', modelIds[0] ).visible = false;
+            console.log(scene.getObjectByProperty( 'uuid', modelIds[0] ) );
+        }
+    });
+    modelMenu.add(window, "apple").name("Apple").listen().onChange(function(value) {
+        if(value == true){
+            //quitar modelo activo
+            if(car){
+                scene.getObjectByProperty( 'uuid', modelIds[0] ).visible = false;
+                car = false;
+            } else if(modelo1){
+                scene.getObjectByProperty( 'uuid', modelIds[2] ).visible = false;
+                modelo1 = false;
+            } else if(modelo2){
+                scene.getObjectByProperty( 'uuid', modelIds[3] ).visible = false;
+                modelo2 = false;
+            }
+            loader.load(
+                // resource URL
+                'Apple/scene.gltf',
+                // called when the resource is loaded
+                function ( gltf ) {
+                    gltf.scene.scale.set(0.1,0.1,0.1) // scale***
+                    modelIds[1] = gltf.scene.uuid;
+                    console.log(modelIds[1]);
+                    scene.add( gltf.scene );
+                    mesh.add(gltf.scene);
+                    gltf.scene.position.x = 0;
+                    gltf.scene.position.z = -1;
+                    gltf.scene.position.y = 0.58;
+                }
+            );
+        }  else{
+            console.log(scene.getObjectByProperty( 'uuid', modelIds[1] ) );
+            scene.getObjectByProperty( 'uuid', modelIds[1] ).visible = false;
+        }
+    });
+    modelMenu.add(window, "modelo1").name("Pesa").listen().onChange(function(value) {
+        if(value == true){
+            //quitar modelo activo
+            if(apple){
+                scene.getObjectByProperty( 'uuid', modelIds[1] ).visible = false;
+                apple = false;
+            } else if(car){
+                scene.getObjectByProperty( 'uuid', modelIds[0] ).visible = false;
+                car = false;
+            } else if(modelo2){
+                scene.getObjectByProperty( 'uuid', modelIds[3] ).visible = false;
+                modelo2 = false;
+            }
+            loader.load(
+                // resource URL
+                'Modelo1/scene.gltf',
+                // called when the resource is loaded
+                function ( gltf ) {
+                    gltf.scene.scale.set(0.4,0.4,0.4) // scale***
+                    modelIds[2] = gltf.scene.uuid;
+                    console.log(modelIds[2]);
+                    scene.add( gltf.scene );
+                    mesh.add(gltf.scene);
+                    gltf.scene.position.x = 0;
+                    gltf.scene.position.z = 0;
+                    gltf.scene.position.y = 0.14;
+                }
+            );
+        }  else{
+            console.log(scene.getObjectByProperty( 'uuid', modelIds[2] ) );
+            scene.getObjectByProperty( 'uuid', modelIds[2] ).visible = false;
+        }
+    });
+    modelMenu.add(window, "modelo2").name("Caja").listen().onChange(function(value) {
+        if(value == true){
+            //quitar modelo activo
+            if(apple){
+                scene.getObjectByProperty( 'uuid', modelIds[1] ).visible = false;
+                apple = false;
+            } else if(modelo1){
+                scene.getObjectByProperty( 'uuid', modelIds[2] ).visible = false;
+                modelo1 = false;
+            } else if(car){
+                scene.getObjectByProperty( 'uuid', modelIds[0] ).visible = false;
+                car = false;
+            }
+            loader.load(
+                // resource URL
+                'Modelo2/glTF/Modelo2.glb',
+                // called when the resource is loaded
+                function ( gltf ) {
+                    gltf.scene.scale.set(0.8,0.8,0.8) // scale***
+                    modelIds[3] = gltf.scene.uuid;
+                    console.log(modelIds[3]);
+                    scene.add( gltf.scene );
+                    mesh.add(gltf.scene);
+                    gltf.scene.position.x = 0;
+                    gltf.scene.position.z = 0;
+                    gltf.scene.position.y = 0.39;
+                }
+            );
+        }  else{
+            console.log(scene.getObjectByProperty( 'uuid', modelIds[3] ) );
+            scene.getObjectByProperty( 'uuid', modelIds[3] ).visible = false;
+        }
     });
 
     //Changes from space to earth
