@@ -82,9 +82,7 @@ function init() {
     const loader = new GLTFLoader();
     // Load a glTF resource
     
-    //Invisible el cube, que servira de padre a los modelos
-    mesh.material.transparent = true;
-    mesh.material.opacity = 0;
+    
 
     //FLOOR
     let floor = new Floor();
@@ -105,7 +103,9 @@ function init() {
 
 
     // SCENE GRAPH
-    
+    //Invisible el cube, que servira de padre a los modelos
+    mesh.material.transparent = true;
+    mesh.material.opacity = 0;
     
     scene.add(directionalLight);
 
