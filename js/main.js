@@ -18,10 +18,6 @@ window.modelo1 = false;
 window.modelo2 = false;
 var modelIds = [0,0,0,0];
 
-//Variables for gravity
-var targetPositionY = 0.5;
-var gravity = 0.01;
-var velocity = 0.1; 
 
 let gui = new dat.GUI();
 let modelMenu = gui.addFolder("Caracteristicas del objeto");
@@ -61,7 +57,7 @@ function init() {
 
     // LIGHTS
     let directionalLight = new THREE.DirectionalLight();
-    directionalLight.position.set(5, 3, 0);
+    directionalLight.position.set(3, 3, 0);
     directionalLight.castShadow = true;
 
     selectEarth();
@@ -108,7 +104,6 @@ function init() {
     mesh.material.opacity = 0;
     
     scene.add(directionalLight);
-
      
     let model =
     {
@@ -357,8 +352,16 @@ function updateScene()
         calculations.finalVelocityR = Math.sqrt((2*calculations.gravityR)*mesh.position.y);
 
         //PRINT RESULTS
-        document.getElementById("actualVText").innerHTML = (Math.round(calculations.finalVelocityR* 100) / 100).toFixed(2);
-        document.getElementById("hText").innerHTML = (Math.round(mesh.position.y* 100) / 100).toFixed(0);
+        if(mesh.position.y <= 0.5)
+        {
+            document.getElementById("actualVText").innerHTML = 0;
+        }
+        else
+        {
+            document.getElementById("actualVText").innerHTML = (Math.round(calculations.finalVelocityR* 100) / 100).toFixed(2);
+            document.getElementById("hText").innerHTML = (Math.round(mesh.position.y* 100) / 100).toFixed(0);
+        }
+        
     }
 }
 
