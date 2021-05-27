@@ -143,6 +143,7 @@ function init() {
                     mesh.add(gltf.scene);
                     gltf.scene.position.x = 0;
                     gltf.scene.position.z = -1;
+                    gltf.scene.position.y = -0.4;
                 }
             );
         } else{
@@ -164,6 +165,7 @@ function init() {
                     mesh.add(gltf.scene);
                     gltf.scene.position.x = 0;
                     gltf.scene.position.z = -1;
+                    gltf.scene.position.y = 0.58;
                 }
             );
         }  else{
@@ -184,7 +186,8 @@ function init() {
                     scene.add( gltf.scene );
                     mesh.add(gltf.scene);
                     gltf.scene.position.x = 0;
-                    gltf.scene.position.z = -1;
+                    gltf.scene.position.z = 0;
+                    gltf.scene.position.y = 0.14;
                 }
             );
         }  else{
@@ -205,7 +208,8 @@ function init() {
                     scene.add( gltf.scene );
                     mesh.add(gltf.scene);
                     gltf.scene.position.x = 0;
-                    gltf.scene.position.z = -1;
+                    gltf.scene.position.z = 0;
+                    gltf.scene.position.y = 0.39;
                 }
             );
         }  else{
