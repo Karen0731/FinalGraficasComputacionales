@@ -131,6 +131,17 @@ function init() {
 
     modelMenu.add(window, "car").name("Car").listen().onChange(function(value) {
         if(value == true){
+            //quitar modelo activo
+            if(apple){
+                scene.getObjectByProperty( 'uuid', modelIds[1] ).visible = false;
+                apple = false;
+            } else if(modelo1){
+                scene.getObjectByProperty( 'uuid', modelIds[2] ).visible = false;
+                modelo1 = false;
+            } else if(modelo2){
+                scene.getObjectByProperty( 'uuid', modelIds[3] ).visible = false;
+                modelo2 = false;
+            }
             loader.load(
                 // resource URL
                 'Car/scene.gltf',
@@ -153,6 +164,17 @@ function init() {
     });
     modelMenu.add(window, "apple").name("Apple").listen().onChange(function(value) {
         if(value == true){
+            //quitar modelo activo
+            if(car){
+                scene.getObjectByProperty( 'uuid', modelIds[0] ).visible = false;
+                car = false;
+            } else if(modelo1){
+                scene.getObjectByProperty( 'uuid', modelIds[2] ).visible = false;
+                modelo1 = false;
+            } else if(modelo2){
+                scene.getObjectByProperty( 'uuid', modelIds[3] ).visible = false;
+                modelo2 = false;
+            }
             loader.load(
                 // resource URL
                 'Apple/scene.gltf',
@@ -175,6 +197,17 @@ function init() {
     });
     modelMenu.add(window, "modelo1").name("Pesa").listen().onChange(function(value) {
         if(value == true){
+            //quitar modelo activo
+            if(apple){
+                scene.getObjectByProperty( 'uuid', modelIds[1] ).visible = false;
+                apple = false;
+            } else if(car){
+                scene.getObjectByProperty( 'uuid', modelIds[0] ).visible = false;
+                car = false;
+            } else if(modelo2){
+                scene.getObjectByProperty( 'uuid', modelIds[3] ).visible = false;
+                modelo2 = false;
+            }
             loader.load(
                 // resource URL
                 'Modelo1/scene.gltf',
@@ -197,6 +230,17 @@ function init() {
     });
     modelMenu.add(window, "modelo2").name("Caja").listen().onChange(function(value) {
         if(value == true){
+            //quitar modelo activo
+            if(apple){
+                scene.getObjectByProperty( 'uuid', modelIds[1] ).visible = false;
+                apple = false;
+            } else if(modelo1){
+                scene.getObjectByProperty( 'uuid', modelIds[2] ).visible = false;
+                modelo1 = false;
+            } else if(car){
+                scene.getObjectByProperty( 'uuid', modelIds[0] ).visible = false;
+                car = false;
+            }
             loader.load(
                 // resource URL
                 'Modelo2/glTF/Modelo2.glb',
